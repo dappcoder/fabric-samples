@@ -154,9 +154,9 @@ function networkUp () {
     generateChannelArtifacts
   fi
   if [ "${IF_COUCHDB}" == "couchdb" ]; then
-    IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH up -d 2>&1
+    IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_HASHGRAPH -f $COMPOSE_FILE_COUCH up --build -d 2>&1
   else
-    IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE up -d 2>&1
+    IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_HASHGRAPH up --build -d 2>&1
   fi
   if [ $? -ne 0 ]; then
     echo "ERROR !!!! Unable to start network"
@@ -232,8 +232,8 @@ function upgradeNetwork () {
 
 # Tear down running network
 function networkDown () {
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH down --volumes
-  docker-compose -f $COMPOSE_FILE down --volumes
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_HASHGRAPH -f $COMPOSE_FILE_COUCH down --volumes
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_HASHGRAPH down --volumes
   # Don't remove the generated artifacts -- note, the ledgers are always removed
   if [ "$MODE" != "restart" ]; then
     # Bring down the network, deleting the volumes
@@ -431,13 +431,15 @@ function generateChannelArtifacts() {
 OS_ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
 # timeout duration - the duration the CLI should wait for a response from
 # another container before giving up
-CLI_TIMEOUT=10
+CLI_TIMEOUT=60
 # default for delay between commands
 CLI_DELAY=3
 # channel name defaults to "mychannel"
 CHANNEL_NAME="mychannel"
 # use this as the default docker-compose yaml definition
 COMPOSE_FILE=docker-compose-cli.yaml
+# hashgraph compose location
+COMPOSE_FILE_HASHGRAPH=docker-compose-hashgraph.yaml
 #
 COMPOSE_FILE_COUCH=docker-compose-couch.yaml
 # use golang as the default language for chaincode

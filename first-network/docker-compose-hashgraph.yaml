@@ -1,0 +1,68 @@
+version: '2'
+
+#networks:
+#  byfn:
+#    driver: bridge
+#    ipam:
+#     config:
+#       - subnet: 10.5.0.0/16
+
+services:
+  swirlds-node01:
+    container_name: swirlds-node01
+    build: './swirlds-sdk'
+    environment:
+      - HYPERLEDGER_ORDERER_HOST_AND_PORT=orderer.example.com:52204
+    restart: on-failure
+    ports:
+      - "50204:50204"
+      - "51204:51204"
+    expose:
+      - "50204"
+      - "51204"
+    networks:
+      byfn:
+        ipv4_address: 10.5.0.4
+
+  swirlds-node02:
+    container_name: swirlds-node02
+    build: './swirlds-sdk'
+    restart: on-failure
+    ports:
+      - "50205:50205"
+    expose:
+      - "50205"
+    networks:
+      byfn:
+        ipv4_address: 10.5.0.5
+
+  swirlds-node03:
+    container_name: swirlds-node03
+    build: './swirlds-sdk'
+    restart: on-failure
+    ports:
+      - "50206:50206"
+    expose:
+      - "50206"
+    networks:
+      byfn:
+        ipv4_address: 10.5.0.6
+
+  swirlds-node04:
+    container_name: swirlds-node04
+    build: './swirlds-sdk'
+    restart: on-failure
+    ports:
+      - "50207:50207"
+    expose:
+      - "50207"
+    networks:
+      byfn:
+        ipv4_address: 10.5.0.7
+
+  orderer.example.com:
+    environment:
+      - SWIRLDS_NODE_ADDRESS_AND_PORT=swirlds-node01:51204
+    depends_on:
+      - swirlds-node01
+

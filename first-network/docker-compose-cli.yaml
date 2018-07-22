@@ -14,6 +14,10 @@ volumes:
 
 networks:
   byfn:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
 
 services:
 
@@ -23,7 +27,8 @@ services:
       service: orderer.example.com
     container_name: orderer.example.com
     networks:
-      - byfn
+      byfn:
+        ipv4_address: 10.5.0.10
 
   peer0.org1.example.com:
     container_name: peer0.org1.example.com
@@ -31,7 +36,8 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.org1.example.com
     networks:
-      - byfn
+      byfn:
+        ipv4_address: 10.5.0.11
 
   peer1.org1.example.com:
     container_name: peer1.org1.example.com
@@ -39,7 +45,8 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.org1.example.com
     networks:
-      - byfn
+      byfn:
+        ipv4_address: 10.5.0.12
 
   peer0.org2.example.com:
     container_name: peer0.org2.example.com
@@ -47,7 +54,8 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.org2.example.com
     networks:
-      - byfn
+      byfn:
+        ipv4_address: 10.5.0.13
 
   peer1.org2.example.com:
     container_name: peer1.org2.example.com
@@ -55,7 +63,8 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.org2.example.com
     networks:
-      - byfn
+      byfn:
+        ipv4_address: 10.5.0.14
 
   cli:
     container_name: cli
@@ -90,4 +99,6 @@ services:
       - peer0.org2.example.com
       - peer1.org2.example.com
     networks:
-      - byfn
+      byfn:
+        ipv4_address: 10.5.0.15
+
